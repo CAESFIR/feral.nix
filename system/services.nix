@@ -1,9 +1,25 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
 # Services
   services = {
+
+  # Resolved
+    resolved = {
+      enable = true;
+      settings = {
+        Resolve = {
+          DNSOverTLS = false; # Will break VPNs if enabled.
+          DNSSEC     = false; # Will break VPNs if enabled.
+          };
+        };
+      };
+  # SCX
+    scx = {
+      enable = true;
+      scheduler = "scx_lavd";
+      };
   # PPD
     power-profiles-daemon.enable = true;
   # UPower

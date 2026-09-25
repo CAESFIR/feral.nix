@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -19,8 +19,8 @@
           root = false;
           pull = true;
           image = "archlinux:latest";
-          home = "/home/Feral/db/home/Arch";
-          hostname = "ZIN";
+          home = "/home/${username}/db/home/Arch";
+          hostname = hostname;
           volume= [ "/ZIN:/ZIN" "/I:/I" "/II:/II" "/III:/III" ];
 #          additional_flags = [ "device=nvidia.com/gpu=all" ];
           additional_packages = [ "git" "nano" ];
@@ -34,8 +34,8 @@
           root = false;
           pull = true;
           image = "fedora:rawhide";
-          home = "/home/Feral/db/home/Fedora";
-          hostname = "ZIN";
+          home = "/home/${username}/db/home/Fedora";
+          hostname = hostname;
           volume= [ "/ZIN:/ZIN" "/I:/I" "/II:/II" "/III:/III" ];
 #          additional_flags = [ "device=nvidia.com/gpu=all" ];
           additional_packages = [ "git" ];
@@ -49,8 +49,8 @@
           root = false;
           pull = true;
           image = "debian:unstable";
-          home = "/home/Feral/db/home/Debian";
-          hostname = "ZIN";
+          home = "/home/${username}/db/home/Debian";
+          hostname = hostname;
           volume= [ "/ZIN:/ZIN" "/I:/I" "/II:/II" "/III:/III" ];
 #          additional_flags = [ "device=nvidia.com/gpu=all" ];
           additional_packages = [ "git" ];

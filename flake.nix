@@ -4,9 +4,13 @@
   inputs = {
 ### Core
    # NixPKGs
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs?ref=nixos-unstable";
+      };
    # Chaotic Nyx
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    chaotic = {
+      url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+      };
    # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -16,6 +20,17 @@
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
+      };
+   # Lix
+    lix = {
+      url = "https://git.lix.systems/lix-project/lix/archive/main.tar.gz";
+      flake = false;
+      };
+   # Lix Module
+    lix-module = {
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.lix.follows = "lix";
       };
 ### Configs
    # Nix Software Center
@@ -52,7 +67,6 @@
    # Noctalia
     noctalia = {
       url = "github:noctalia-dev/noctalia";
-      inputs.nixpkgs.follows = "nixpkgs";
       };
    # Caelestia
     caelestia = {
@@ -77,35 +91,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
       };
 ### Third Party
-
+  ## Nix Alien
+    nix-alien = {
+      url = "github:thiagokokada/nix-alien";
+      };
   ## Spicetify
     spicetify = {
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
       };
 
-##### Flake-Less
-
   };
 
   outputs = inputs@{
     self,
-    nixpkgs,                       # NixPKGs
-    chaotic,                       # Chaotic Nyx
-    home-manager,                  # Home Manager
-    nur,                           # NUR
-    nix-software-center,           # Nix Software Center
-    nixos-conf-editor,             # NixOS Conf Editor
-    firefox-nightly,               # Firefox Nightly
-    millennium,                    # Steam Millennium
-    hyprland,                      # Hyprland
-    quickshell,                    # Quickshell
-    noctalia,                      # Noctalia Shell
-    caelestia,                     # Caelestia Shell
-    plasma-manager,                # Plasma Manager
-    nix-ld,                        # LD
-    stylix,                        # Stylix
-    spicetify,                     # Spicetify
+    nixpkgs,
     ...
     }: {
 
@@ -113,7 +113,12 @@
     nixosConfigurations = {
       ZIN = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs self;
+          username = "Feral";
+          hostname = "ZIN";
+          system = "x86_64-linux";
+          timezone = "Asia/Kolkata";
+          };
         modules = [
           ./main/system.nix
           ./main/user.nix

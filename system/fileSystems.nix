@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -45,12 +45,37 @@
       fsType = "btrfs";
       options = [ "ssd" "rw" "exec" "acl" "noatime" "discard=async" "noautodefrag" "noflushoncommit" "space_cache=v2" "compress=zstd:3" "thread_pool=4" "commit=60" ];
       };
+## Temporary
+
+  # /tmp
+    "/tmp" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      };
+
+  # /var/cache
+    "/var/cache" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      };
+
+  # /var/log
+    "/var/log" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      };
+
+  # /var/tmp
+    "/var/tmp" = {
+      device = "tmpfs";
+      fsType = "tmpfs";
+      };
 
  ## Boot | /dev/sda3 | /boot
     "/boot" = {
       device = "/dev/disk/by-uuid/3333-7469";
       fsType = "vfat";
-      options = [ "rw" "noatime" "umask=0022" "shortname=mixed" "utf8" "errors=remount-ro"];
+      options = [ "rw" "noatime" "umask=0022" "shortname=mixed" "utf8" ];
       };
 
 ### HDD

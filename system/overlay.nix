@@ -1,16 +1,10 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
   nixpkgs.overlays = [
     inputs.millennium.overlays.default
-    (final: prev: {
-      inherit (prev.lixPackageSets.latest)
-        nixpkgs-review
-        nix-eval-jobs
-        nix-fast-build
-        colmena;
-      })
-        ];
+    inputs.nix-alien.overlays.default
+    ];
 
 }

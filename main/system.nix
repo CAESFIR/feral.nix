@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -43,6 +43,7 @@
         xdgOpenUsePortal = true;
         };
       sounds.enable = true;
+      terminal-exec.enable = true;
       };
 
     environment = {
@@ -50,27 +51,15 @@
       localBinInPath = true;
       stub-ld.enable = true;
       sessionVariables = {
+       # SDL
+        SDL_VIDEODRIVER = "wayland";
+        SDL_AUDIODRIVER = "pipewire";
         PATH = [
-          "/ZIN/PATH"
+          "/ZIN/Linux/PATH"
+          "/ZIN/Linux/AppImage"
           ];
-        XDG_DESKTOP_DIR      =  "/ZIN/Linux/XDG/Desktop";
-        XDG_DOCUMENTS_DIR    =  "/ZIN/Linux/XDG/Documents";
-        XDG_DOWNLOAD_DIR     =  "/ZIN/Linux/XDG/Downloads";
-        XDG_MUSIC_DIR        =  "/ZIN/Linux/XDG/Music";
-        XDG_PICTURES_DIR     =  "/ZIN/Linux/XDG/Pictures";
-        XDG_PROJECTS_DIR     =  "/ZIN/Linux/XDG/Projects";
-        XDG_PUBLICSHARE_DIR  =  "/ZIN/Linux/XDG/Public";
-        XDG_TEMPLATES_DIR    =  "/ZIN/Linux/XDG/Templates";
-        XDG_VIDEOS_DIR       =  "/ZIN/Linux/XDG/Videos";
         };
       };
-
-  # Hyprland Cachix
-    nix.settings = {
-     substituters = ["https://hyprland.cachix.org"];
-     trusted-substituters = ["https://hyprland.cachix.org"];
-     trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-    };
 
   # Sudo password
   security.sudo = {
@@ -83,23 +72,40 @@
   # Electron Wayland
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    LILIPOD_HOME="/home/Feral/db";
+    LILIPOD_HOME="/home/${username}/db";
   };
 
   networking.nftables.enable = true;
 
   # Host Name
-  networking.hostName = "ZIN"; # Hostname
+  networking.hostName = hostname; # Hostname
 
   # Time Zone
-  time.timeZone = "Asia/Kolkata"; # Timezone
+  time.timeZone = timezone; # Timezone
 
-  # Configure network connections interactively with nmcli or nmtui.
-  networking.networkmanager.enable = true;
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  # Network
+  networking = {
+    nameservers = [
+      "1.1.1.1"
+      "9.9.9.9"
+      ];
+    enableIPv6 = true;
+    firewall = {
+      enable = true;
+      backend = "nftables";
+      };
+    resolvconf = {
+      enable = false;
+      };
+    networkmanager = {
+      enable              = true;
+      logLevel            = "OFF";
+      dhcp                = "internal";
+      dns                 = "systemd-resolved";
+      ethernet.macAddress = "AA:AA:AA:AA:AA:AA";
+      wifi.macAddress     = "random";
+      };
+    };
 
   security.rtkit.enable = true;
 
@@ -111,7 +117,10 @@
     };
 
  # Locales
-   i18n.defaultLocale = "en_US.UTF-8";
+   i18n = {
+     defaultLocale = "en_US.UTF-8";
+     inputMethod.enable = false;
+     };
    console = {
      font = "Lat2-Terminus16";
      keyMap = "us";
@@ -127,12 +136,16 @@
       runGarbageCollection = true;
       upgrade = true;
         };
+
 #     nixos = {
-#       codeName = "";
-#       label = "";
-#       release = "";
-#       variantName = "";
+#       codeName    = lib.mkForce "ZIN";
+#       label       = lib.mkForce "Feral As Fuck";
+#       release     = lib.mkForce "69";
+#       tags        = lib.mkForce [ "x86-64-v3" "nvidia-gpu" "intel-cpu" "amd-cpu" "desktop" "laptop" ];
+#       variantName = lib.mkForce "Personal Computer";
+#       variant_id  = lib.mkForce "pc";
 #         };
+
     switch = {
       enable = true;
         };
@@ -141,7 +154,7 @@
 # Nix
   nix = {
     enable = true;
-    package = pkgs.lixPackageSets.latest.lix;
+#     package =
     channel.enable = true;
     checkConfig = true;
     daemon = {
@@ -162,6 +175,22 @@
       automatic = true;
         };
     settings = {
+      substituters = [
+        "https://cache.nixos.org"                   # NixPKGs
+        "https://nix-community.cachix.org"          # NixCommunity
+        "https://afnix-hydra.s3-bulk-web.afnix.fr"  # LixPM
+        "https://nyx-cache.chaotic.cx"              # ChaoticNyx
+        "https://hyprland.cachix.org"               # Hyprland
+        "https://noctalia.cachix.org"               # Noctalia
+        ];
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="           # NixPKGs
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="  # NixCommunity
+        "afnix:oqt801y+IwJ09XRtNDQYCKb7zuCw9DQXQk8fDWPkwxM="                       # LixPM
+        "nyx-cache.chaotic.cx:dJxTrgMC3V3cFfyIiBQDQorG6k1LsqurH/srpMSq7qk="        # ChaoticNyx
+        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="       # Hyprland
+        "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="       # Noctalia
+        ];
       cores = 4;
       max-jobs = 4;
       sandbox = true;
@@ -172,40 +201,33 @@
         };
     };
 
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
+  services.printing.enable = lib.mkForce false;
 
   ### UnFree
   nixpkgs.config.allowUnfree = true;
 
   ### Users / Groups
-  users.users.Feral = {
+  users.users.${username} = {
     shell = pkgs.zsh;
     isNormalUser = true;
     uid = 1000;
-    group = "Feral";
-    extraGroups = [ "Feral" "wheel" "gamemode" ];
+    group = username;
+    extraGroups = [ username "wheel" "gamemode" ];
     packages = with pkgs; [
       ];
     subGidRanges = [{
-        count = 65536;
+        count    = 65536;
         startGid = 100000;
       }];
     subUidRanges = [{
-        count = 65536;
+        count    = 65536;
         startUid = 100000;
       }];
     };
 
-  users.groups.Feral = {
+  users.groups.${username} = {
     gid = 1000;
   };
-
-  networking.firewall.enable = false;
 
 }
 

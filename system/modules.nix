@@ -1,12 +1,14 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
   imports = with inputs; [
-                chaotic.nixosModules.default
-                home-manager.nixosModules.home-manager
-                nur.modules.nixos.default
-                nix-ld.nixosModules.nix-ld
-                ];
+                   lix-module.nixosModules.default         # Lix Package Manager
+                   home-manager.nixosModules.home-manager  # Home Manager
+                   chaotic.nixosModules.default            # Chaotic Nyx
+                   nur.modules.nixos.default               # Nix User Repository
+                   nix-ld.nixosModules.nix-ld              # Nix LD
+                   noctalia.nixosModules.default           # Noctalia
+                   ];
 
 }

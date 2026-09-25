@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -9,13 +9,14 @@
   # Bluetooth
     bluetooth.enable = true;
   # Steam Hardware
-    steam-hardware.enable = true;
+    steam-hardware.enable = lib.mkForce false;
   # Firmware
     firmware = [
      # EDID
       (pkgs.runCommand "edid" {} ''
       mkdir -p $out/lib/firmware/edid
-      cp ${../edid/DP-3.bin} $out/lib/firmware/edid/DP-3.bin
+      cp ${../edid/DP-3} $out/lib/firmware/edid/DP-3
+      cp ${../edid/HDMI-A-1} $out/lib/firmware/edid/HDMI-A-1
       '')
      # HDA-Jack-Retask
       (pkgs.runCommand "audio" {} ''

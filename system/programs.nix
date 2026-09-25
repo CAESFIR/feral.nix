@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -21,6 +21,8 @@
   # Starship
     starship = {
       enable = true;
+      enableZshIntegration = true;
+      enableBashIntegration = true;
     };
   # Plasma Browser Integration
     chromium = {
@@ -30,9 +32,26 @@
   # ZSH
     zsh = {
       enable = true;
+#       enableCompletion = true;
+#       enableLsColors = true;
+#       autosuggestions = {
+#         enable = true;
+#         async = true;
+#         };
+#       syntaxHighlighting = {
+#         enable = true;
+#         };
+#       zsh-autoenv = {
+#         enable = true;
+#         };
+#       ohMyZsh = {
+#         enable = true;
+#         plugins = [ "git" "systemd" ];
+#         theme = "";
+#         };
     };
   # Password
-    ssh.askPassword = pkgs.lib.mkForce "${pkgs.seahorse.out}/libexec/seahorse/ssh-askpass";
+    ssh.askPassword = pkgs.lib.mkForce "${pkgs.ksshaskpass.out}/bin/ksshaskpass";
     seahorse.enable = true;
   # Git
     git.enable = true;
@@ -48,6 +67,12 @@
       package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
+  # Noctalia
+#     noctalia = {
+#       enable = true;
+#       recommendedServices.enable = true;
+#       systemd.enable = true;
+#       };
   # XWayland
     xwayland.enable = true;
   # AppImage

@@ -1,11 +1,17 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
-hardware.graphics.enable32Bit = true;
+  boot.loader.grub.forcei686    = lib.mkForce false;
 
-services.pipewire.alsa.support32Bit = true;
+  fonts.fontconfig.cache32Bit   = lib.mkForce false;
 
-fonts.fontconfig.cache32Bit = true;
+  hardware.graphics.enable32Bit = lib.mkForce false;
+
+  services = {
+    pipewire.alsa.support32Bit  = lib.mkForce false;
+    pulseaudio.support32Bit     = lib.mkForce false;
+    jack.alsa.support32Bit      = lib.mkForce false;
+    };
 
 }

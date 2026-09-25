@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -16,19 +16,28 @@
 
   home.file.".distroboxrc".text = ''
     container_manager="lilipod"
-    export LILIPOD_HOME="/home/CAESFIR/db"
+    export LILIPOD_HOME="/home/${username}/db"
     '';
 
   wayland.windowManager.hyprland = {
     enable = true;
-    systemd.variables = ["--all"];
+    sourceFirst = true;
+    configType = "lua";
+    systemd = {
+      enable = true;
+      enableXdgAutostart = true;
+      variables = ["--all"];
+      };
+    xwayland = {
+      enable = true;
+      };
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
 
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    LILIPOD_HOME="/home/Feral/db";
+    LILIPOD_HOME="/home/${username}/db";
     };
 
   xdg.configFile."uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";

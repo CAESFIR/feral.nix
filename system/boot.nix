@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -12,12 +12,13 @@
       availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usbhid" "uas" "usb_storage" "sd_mod" ];
       kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
       extraFiles = {
-      "/lib/firmware/edid/DP-3.bin".source = ../edid/DP-3.bin;
+      "/lib/firmware/edid/DP-3".source = ../edid/DP-3;
+      "/lib/firmware/edid/HDMI-A-1".source = ../edid/HDMI-A-1;
       };
     };
     kernelPackages = pkgs.linuxPackages_latest;
     kernelModules = [ "kvm-intel" "kvm-amd" "ntsync" ];
-    kernelParams = [ "quiet" "splash" "nosgx" "clocksource=tsc" "tsc=reliable" "random.trust_cpu=on" "split_lock_detect=off" "nowatchdog" "apparmor=0" "selinux=0" "audit=0" "intel_iommu=on" "amd_iommu=on" "iommu=pt" "tsx=on" "mitigations=off" "drm.edid_firmware=DP-3:edid/DP-3.bin" ];
+    kernelParams = [ "quiet" "splash" "nosgx" "clocksource=tsc" "tsc=reliable" "random.trust_cpu=on" "split_lock_detect=off" "nowatchdog" "apparmor=0" "selinux=0" "audit=0" "intel_iommu=on" "amd_iommu=on" "iommu=pt" "tsx=on" "mitigations=off" "drm.edid_firmware=DP-3:edid/DP-3,HDMI-A-1:edid/HDMI-A-1" ];
     extraModprobeConfig = ''
       options snd-hda-intel patch=hda-jack-retask.fw
     '';
@@ -36,12 +37,11 @@
     };
   };
 
-  nixpkgs.hostPlatform = "x86_64-linux";
+  nixpkgs.hostPlatform = system;
 
   boot = {
     tmp = {
       useTmpfs = true;
-#       useZram = true;
       };
     };
 
@@ -59,11 +59,35 @@
       theme = "lone";
       };
     loader = {
-  # EFI
+      timeout = 3;
+    # EFI
       efi = {
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot";
         };
+    # SystemD Boot
+#       systemd-boot = {
+#         enable = true;
+#         configurationLimit = 3;
+#         consoleMode = "keep";
+#         editor = false;
+#         edk2-uefi-shell =  {
+#           enable = false;
+#           sortKey = "";
+#           };
+#         extraEntries = {
+#          # Arch
+#           "arch.conf" = ''
+#             title Arch
+#             efi   /EFI/Arch/grubx64.efi
+#           '';
+#          # Windows
+#           "windows.conf" = ''
+#             title Windows
+#             efi   /EFI/Boot/bootx64.efi
+#           '';
+#           };
+#         };
     # GRUB
       grub = {
         enable = true;

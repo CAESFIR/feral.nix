@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, inputs, ... }:
+{ config, lib, pkgs, options, modulesPath, inputs, self, username, hostname, system, timezone, ... }:
 
 {
 
@@ -7,19 +7,16 @@
   ## pkgs
       (with pkgs; [
     ## Discord
-      # Stable
         (discord.override {
         withOpenASAR = true;
         })
-      # Canary
         (discord-canary.override {
         withOpenASAR = true;
         })
-      # Development
         (discord-development.override {
         withOpenASAR = true;
         })
-
+    ## AppImage Override
         (appimage-run.override {
         extraPkgs = pkgs: with pkgs; [
         zstd
@@ -28,9 +25,13 @@
     ## Tools
         curl
         wget
-        steamguard-cli
-        steamcmd
         efibootmgr
+        chromium
+    ## Extras
+        gparted
+        steamcmd
+        nix-alien
+        kitty
     ## File Systems
         btrfs-progs                     # BTRFS
         e2fsprogs                       # EXT4
@@ -38,12 +39,6 @@
         exfatprogs                      # EXFAT
         dosfstools                      # FAT32
         mtools                          # FAT32
-    ## UUPdump
-#         aria2
-#         cabextract
-#         wimlib
-#         chntpw
-#         cdrtools
     ## Steamy
         jq
         unzip
@@ -51,13 +46,10 @@
     ## MSR
         playwright
         typescript
-    ## Extras
-        detect-it-easy
-        scanmem
     ## inputs
         (with inputs; [
-          nixos-conf-editor.packages.${stdenv.hostPlatform.system}.nixos-conf-editor
-          nix-software-center.packages.${stdenv.hostPlatform.system}.nix-software-center
+          nixos-conf-editor.packages.${stdenv.hostPlatform.system}.nixos-conf-editor     # Nix Editor
+          nix-software-center.packages.${stdenv.hostPlatform.system}.nix-software-center # Nix Store
         ])
       ]);
   };
